@@ -1,0 +1,39 @@
+<div class="layout" [class.retraido]="retraido()">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <!-- El botón que retrae/expande -->
+     <button
+  type="button"
+  class="btn-retraer"
+  (click)="alternar()"
+  [attr.aria-label]="retraido() ? 'Expandir menú' : 'Retraer menú'"
+>
+  <span class="material-symbols-outlined">{{ retraido() ? 'menu' : 'menu_open' }}</span>
+</button>
+
+      <!-- El título solo se muestra si NO está retraído -->
+      @if (!retraido()) {
+        <h1>{{ titulo }}</h1>
+      }
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of menu; track item.ruta) {
+        <a [routerLink]="item.ruta"
+           routerLinkActive="activo"
+           [title]="item.etiqueta">
+          <span class="icono material-symbols-outlined">{{ item.icono }}</span>
+          @if (!retraido()) {
+            <span class="etiqueta">{{ item.etiqueta }}</span>
+          }
+        </a>
+      }
+    </nav>
+  </aside>
+
+  <!-- Área de contenido donde se cargan las páginas CRUD -->
+  <main class="contenido">
+    <router-outlet />
+  </main>
+</div>

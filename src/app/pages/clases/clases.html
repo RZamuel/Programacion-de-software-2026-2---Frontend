@@ -1,0 +1,100 @@
+<header class="cabecera-3">
+    <form class="filtro" (submit)="$event.preventDefault(); buscarPorId()">
+        <input class="campo" [(ngModel)]="idFiltro" name="idFiltro" placeholder="Filtrar por ID" autocomplete="off" />
+        <button type="submit" class="btn btn-secundario" [disabled]="cargando()">Buscar</button>
+        <button type="button" class="btn btn-neutro" (click)="limpiarFiltro()" [disabled]="cargando()">
+            Todos
+        </button>
+    </form>
+
+    <h2>Clases</h2>
+
+    <button type="button" class="btn btn-primario" (click)="abrirCrear()">
+        <span class="material-symbols-outlined">add</span> Crear
+    </button>
+</header>
+
+@if (mensaje()) {
+<p class="mensaje" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<div class="tabla-contenedor">
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID entrenador</th>
+                <th>Nombre</th>
+                <th>Día</th>
+                <th>Hora</th>
+                <th>Capacidad</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (fila of filas(); track fila.id_clase) {
+            <tr>
+                <td><span class="id-corto" [title]="fila.id_clase">{{ fila.id_clase }}</span></td>
+                <td><span class="id-corto" [title]="fila.id_entrenador">{{ fila.id_entrenador }}</span></td>
+                <td><strong>{{ fila.nombre }}</strong></td>
+                <td>{{ fila.dia_semana }}</td>
+                <td>{{ fila.hora }}</td>
+                <td>{{ fila.capacidad_maxima }} personas</td>
+                <td>
+                    <div class="acciones">
+                        <button type="button" class="btn btn-secundario" (click)="abrirEditar(fila)">Editar</button>
+                        <button type="button" class="btn btn-peligro" (click)="eliminar(fila)">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (popupAbierto()) {
+<div class="fondo-popup" (click)="cerrarPopup()">
+    <form class="popup formulario" (click)="$event.stopPropagation()" (ngSubmit)="guardar()">
+        <h3>{{ modo() === 'crear' ? 'Crear clase' : 'Editar clase' }}</h3>
+
+        <label>
+            <span>ID del entrenador (UUID)</span>
+            <input [(ngModel)]="formulario.id_entrenador" name="id_entrenador" required
+                placeholder="Copia el ID desde Entrenadores" />
+        </label>
+
+        <label>
+            <span>Nombre de la clase</span>
+            <input [(ngModel)]="formulario.nombre" name="nombre" required placeholder="Ej: Spinning, Yoga, CrossFit" />
+        </label>
+
+        <label>
+            <span>Día de la semana</span>
+            <select [(ngModel)]="formulario.dia_semana" name="dia_semana" required>
+                <option value="Lunes">Lunes</option>
+                <option value="Martes">Martes</option>
+                <option value="Miércoles">Miércoles</option>
+                <option value="Jueves">Jueves</option>
+                <option value="Viernes">Viernes</option>
+                <option value="Sábado">Sábado</option>
+                <option value="Domingo">Domingo</option>
+            </select>
+        </label>
+
+        <label>
+            <span>Hora</span>
+            <input [(ngModel)]="formulario.hora" name="hora" type="time" required />
+        </label>
+
+        <label>
+            <span>Capacidad máxima</span>
+            <input [(ngModel)]="formulario.capacidad_maxima" name="capacidad_maxima" type="number" required min="1" />
+        </label>
+
+        <div class="popup-acciones">
+            <button type="button" class="btn btn-neutro" (click)="cerrarPopup()">Cancelar</button>
+            <button type="submit" class="btn btn-primario" [disabled]="cargando()">Guardar</button>
+        </div>
+    </form>
+</div>
+}

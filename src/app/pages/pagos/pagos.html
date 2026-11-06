@@ -1,0 +1,99 @@
+<header class="cabecera-3">
+    <form class="filtro" (submit)="$event.preventDefault(); buscarPorId()">
+        <input class="campo" [(ngModel)]="idFiltro" name="idFiltro" placeholder="Filtrar por ID" autocomplete="off" />
+        <button type="submit" class="btn btn-secundario" [disabled]="cargando()">Buscar</button>
+        <button type="button" class="btn btn-neutro" (click)="limpiarFiltro()" [disabled]="cargando()">
+            Todos
+        </button>
+    </form>
+
+    <h2>Pagos</h2>
+
+    <button type="button" class="btn btn-primario" (click)="abrirCrear()">
+        <span class="material-symbols-outlined">add</span> Crear
+    </button>
+</header>
+
+@if (mensaje()) {
+<p class="mensaje" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<div class="tabla-contenedor">
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID miembro</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Método</th>
+                <th>Concepto</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (fila of filas(); track fila.id_pago) {
+            <tr>
+                <td><span class="id-corto" [title]="fila.id_pago">{{ fila.id_pago }}</span></td>
+                <td><span class="id-corto" [title]="fila.id_miembro">{{ fila.id_miembro }}</span></td>
+                <td><strong>${{ fila.monto | number:'1.0-0' }}</strong></td>
+                <td>{{ fila.fecha_pago }}</td>
+                <td>{{ fila.metodo_pago | titlecase }}</td>
+                <td>{{ fila.concepto }}</td>
+                <td>
+                    <div class="acciones">
+                        <button type="button" class="btn btn-secundario" (click)="abrirEditar(fila)">Editar</button>
+                        <button type="button" class="btn btn-peligro" (click)="eliminar(fila)">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (popupAbierto()) {
+<div class="fondo-popup" (click)="cerrarPopup()">
+    <form class="popup formulario" (click)="$event.stopPropagation()" (ngSubmit)="guardar()">
+        <h3>{{ modo() === 'crear' ? 'Registrar pago' : 'Editar pago' }}</h3>
+
+        <label>
+            <span>ID del miembro (UUID)</span>
+            <input [(ngModel)]="formulario.id_miembro" name="id_miembro" required
+                placeholder="Copia el ID desde Miembros" />
+        </label>
+
+        <label>
+            <span>Monto</span>
+            <input [(ngModel)]="formulario.monto" name="monto" type="number" required min="0" step="0.01" />
+        </label>
+
+        <label>
+            <span>Fecha de pago</span>
+            <input [(ngModel)]="formulario.fecha_pago" name="fecha_pago" type="date" required />
+        </label>
+
+        <label>
+            <span>Método de pago</span>
+            <select [(ngModel)]="formulario.metodo_pago" name="metodo_pago" required>
+                <option value="efectivo">Efectivo</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="transferencia">Transferencia</option>
+                <option value="nequi">Nequi</option>
+                <option value="daviplata">Daviplata</option>
+            </select>
+        </label>
+
+        <label>
+            <span>Concepto</span>
+            <input [(ngModel)]="formulario.concepto" name="concepto" required
+                placeholder="Ej: Pago mensualidad octubre" />
+        </label>
+
+        <div class="popup-acciones">
+            <button type="button" class="btn btn-neutro" (click)="cerrarPopup()">Cancelar</button>
+            <button type="submit" class="btn btn-primario" [disabled]="cargando()">Guardar</button>
+        </div>
+    </form>
+</div>
+}

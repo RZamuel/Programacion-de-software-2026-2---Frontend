@@ -1,0 +1,94 @@
+<header class="cabecera-3">
+    <form class="filtro" (submit)="$event.preventDefault(); buscarPorId()">
+        <input class="campo" [(ngModel)]="idFiltro" name="idFiltro" placeholder="Filtrar por ID" autocomplete="off" />
+        <button type="submit" class="btn btn-secundario" [disabled]="cargando()">Buscar</button>
+        <button type="button" class="btn btn-neutro" (click)="limpiarFiltro()" [disabled]="cargando()">
+            Todos
+        </button>
+    </form>
+
+    <h2>Rutinas</h2>
+
+    <button type="button" class="btn btn-primario" (click)="abrirCrear()">
+        <span class="material-symbols-outlined">add</span> Crear
+    </button>
+</header>
+
+@if (mensaje()) {
+<p class="mensaje" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<div class="tabla-contenedor">
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>ID miembro</th>
+                <th>ID entrenador</th>
+                <th>Fecha creación</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (fila of filas(); track fila.id_rutina) {
+            <tr>
+                <td><span class="id-corto" [title]="fila.id_rutina">{{ fila.id_rutina }}</span></td>
+                <td><strong>{{ fila.nombre }}</strong></td>
+                <td class="descripcion" [title]="fila.descripcion">{{ fila.descripcion }}</td>
+                <td><span class="id-corto" [title]="fila.id_miembro">{{ fila.id_miembro }}</span></td>
+                <td><span class="id-corto" [title]="fila.id_entrenador">{{ fila.id_entrenador }}</span></td>
+                <td>{{ fila.fecha_creacion }}</td>
+                <td>
+                    <div class="acciones">
+                        <button type="button" class="btn btn-secundario" (click)="abrirEditar(fila)">Editar</button>
+                        <button type="button" class="btn btn-peligro" (click)="eliminar(fila)">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (popupAbierto()) {
+<div class="fondo-popup" (click)="cerrarPopup()">
+    <form class="popup formulario" (click)="$event.stopPropagation()" (ngSubmit)="guardar()">
+        <h3>{{ modo() === 'crear' ? 'Crear rutina' : 'Editar rutina' }}</h3>
+
+        <label>
+            <span>Nombre de la rutina</span>
+            <input [(ngModel)]="formulario.nombre" name="nombre" required placeholder="Ej: Rutina de hipertrofia" />
+        </label>
+
+        <label>
+            <span>Descripción</span>
+            <textarea [(ngModel)]="formulario.descripcion" name="descripcion" required rows="4"
+                placeholder="Describe los ejercicios, series y repeticiones..."></textarea>
+        </label>
+
+        <label>
+            <span>ID del miembro (UUID)</span>
+            <input [(ngModel)]="formulario.id_miembro" name="id_miembro" required
+                placeholder="Copia el ID desde Miembros" />
+        </label>
+
+        <label>
+            <span>ID del entrenador (UUID)</span>
+            <input [(ngModel)]="formulario.id_entrenador" name="id_entrenador" required
+                placeholder="Copia el ID desde Entrenadores" />
+        </label>
+
+        <label>
+            <span>Fecha de creación</span>
+            <input [(ngModel)]="formulario.fecha_creacion" name="fecha_creacion" type="date" required />
+        </label>
+
+        <div class="popup-acciones">
+            <button type="button" class="btn btn-neutro" (click)="cerrarPopup()">Cancelar</button>
+            <button type="submit" class="btn btn-primario" [disabled]="cargando()">Guardar</button>
+        </div>
+    </form>
+</div>
+}

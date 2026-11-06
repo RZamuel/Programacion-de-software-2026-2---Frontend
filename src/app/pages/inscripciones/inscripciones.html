@@ -1,0 +1,104 @@
+<header class="cabecera-3">
+    <form class="filtro" (submit)="$event.preventDefault(); buscarPorId()">
+        <input class="campo" [(ngModel)]="idFiltro" name="idFiltro" placeholder="Filtrar por ID" autocomplete="off" />
+        <button type="submit" class="btn btn-secundario" [disabled]="cargando()">Buscar</button>
+        <button type="button" class="btn btn-neutro" (click)="limpiarFiltro()" [disabled]="cargando()">
+            Todos
+        </button>
+    </form>
+
+    <h2>Inscripciones</h2>
+
+    <button type="button" class="btn btn-primario" (click)="abrirCrear()">
+        <span class="material-symbols-outlined">add</span> Crear
+    </button>
+</header>
+
+@if (mensaje()) {
+<p class="mensaje" [class.error]="esError()">{{ mensaje() }}</p>
+}
+
+<div class="tabla-contenedor">
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ID miembro</th>
+                <th>ID membresía</th>
+                <th>Fecha inicio</th>
+                <th>Fecha fin</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (fila of filas(); track fila.id_inscripcion) {
+            <tr>
+                <td><span class="id-corto" [title]="fila.id_inscripcion">{{ fila.id_inscripcion }}</span></td>
+                <td><span class="id-corto" [title]="fila.id_miembro">{{ fila.id_miembro }}</span></td>
+                <td><span class="id-corto" [title]="fila.id_membresia">{{ fila.id_membresia }}</span></td>
+                <td>{{ fila.fecha_inicio }}</td>
+                <td>{{ fila.fecha_fin }}</td>
+                <td>
+                    <span class="badge" [class.badge-ok]="fila.estado === 'activa'"
+                        [class.badge-pausa]="fila.estado === 'vencida'" [class.badge-off]="fila.estado === 'cancelada'"
+                        [class.badge-gris]="fila.estado === 'inactiva'">
+                        {{ fila.estado | titlecase }}
+                    </span>
+                </td>
+                <td>
+                    <div class="acciones">
+                        <button type="button" class="btn btn-secundario" (click)="abrirEditar(fila)">Editar</button>
+                        <button type="button" class="btn btn-peligro" (click)="eliminar(fila)">Eliminar</button>
+                    </div>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@if (popupAbierto()) {
+<div class="fondo-popup" (click)="cerrarPopup()">
+    <form class="popup formulario" (click)="$event.stopPropagation()" (ngSubmit)="guardar()">
+        <h3>{{ modo() === 'crear' ? 'Crear inscripción' : 'Editar inscripción' }}</h3>
+
+        <label>
+            <span>ID del miembro (UUID)</span>
+            <input [(ngModel)]="formulario.id_miembro" name="id_miembro" required
+                placeholder="Copia el ID desde Miembros" />
+        </label>
+
+        <label>
+            <span>ID de la membresía (UUID)</span>
+            <input [(ngModel)]="formulario.id_membresia" name="id_membresia" required
+                placeholder="Copia el ID desde Membresías" />
+        </label>
+
+        <label>
+            <span>Fecha de inicio</span>
+            <input [(ngModel)]="formulario.fecha_inicio" name="fecha_inicio" type="date" required />
+        </label>
+
+        <label>
+            <span>Fecha de fin</span>
+            <input [(ngModel)]="formulario.fecha_fin" name="fecha_fin" type="date" required />
+        </label>
+
+        <label>
+            <span>Estado</span>
+            <select [(ngModel)]="formulario.estado" name="estado" required>
+                <option value="activa">Activa</option>
+                <option value="inactiva">Inactiva</option>
+                <option value="vencida">Vencida</option>
+                <option value="cancelada">Cancelada</option>
+            </select>
+        </label>
+
+        <div class="popup-acciones">
+            <button type="button" class="btn btn-neutro" (click)="cerrarPopup()">Cancelar</button>
+            <button type="submit" class="btn btn-primario" [disabled]="cargando()">Guardar</button>
+        </div>
+    </form>
+</div>
+}
