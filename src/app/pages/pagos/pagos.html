@@ -42,8 +42,10 @@
                 <td>{{ fila.concepto }}</td>
                 <td>
                     <div class="acciones">
-                        <button type="button" class="btn btn-secundario" (click)="abrirEditar(fila)">Editar</button>
-                        <button type="button" class="btn btn-peligro" (click)="eliminar(fila)">Eliminar</button>
+                        <button type="button" class="btn btn-secundario btn-icono" title="Editar" aria-label="Editar"
+                            (click)="abrirEditar(fila)"><span class="material-symbols-outlined">edit</span></button>
+                        <button type="button" class="btn btn-peligro btn-icono" title="Eliminar" aria-label="Eliminar"
+                            (click)="eliminar(fila)"><span class="material-symbols-outlined">delete</span></button>
                     </div>
                 </td>
             </tr>
