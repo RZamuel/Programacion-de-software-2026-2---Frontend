@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'http://127.0.0.1:8000',
+  apiUrl: 'https://programacion-de-software-2026-2-backend-pl3r.onrender.com',
 };
